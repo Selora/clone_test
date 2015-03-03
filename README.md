@@ -4,7 +4,9 @@ Code used to test the lttng/tracecompass LXC/namespace analysis
 
 #HOWTO :
 Compile this program using gcc :
+```
 gcc pidns_init_sleep.c -o pidns_init_sleep
+```
 
 #Trace this program :
 To run a program creating pid namespace, you need to be root (or to have user namespace enabled)
