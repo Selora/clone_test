@@ -29,6 +29,7 @@ lttng create namespace_session -o /path/to/trace
 lttng enable-event --kernel --channel container_info sched_process_fork
 lttng start
 ```
+Note that the above only uses sched_process_fork. One could enable ALL kernel events.
 
 Then run the program you just compiled (as root too):
 ```
