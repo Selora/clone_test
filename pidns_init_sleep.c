@@ -91,7 +91,7 @@ int task1(void* arg)
 
     printf("Task 3 created with PID:%d\n", task3_pid);
 
-    execlp("sleep", "sleep", "5", (char *) NULL);
+    execlp("sleep", "sleep", "25", (char *) NULL);
     errExit("execlp");  /* Only reached if execlp() fails */
 }
 
@@ -100,7 +100,7 @@ int task2(void* arg)
     char* task_id = (char*)arg;
 
     print_task(task_id);
-    execlp("sleep", "sleep", "5", (char *) NULL);
+    execlp("sleep", "sleep", "25", (char *) NULL);
     errExit("execlp");  /* Only reached if execlp() fails */
 }
 
@@ -115,7 +115,7 @@ int task3(void* arg)
 
     printf("Task 4 created with PID:%d\n", task4_pid);
 
-    execlp("sleep", "sleep", "5", (char *) NULL);
+    execlp("sleep", "sleep", "25", (char *) NULL);
     errExit("execlp");  /* Only reached if execlp() fails */
 }
 
@@ -124,7 +124,7 @@ int task4(void* arg)
     char* task_id = (char*)arg;
 
     print_task(task_id);
-    execlp("sleep", "sleep", "5", (char *) NULL);
+    execlp("sleep", "sleep", "25", (char *) NULL);
     errExit("execlp");  /* Only reached if execlp() fails */
 }
 
