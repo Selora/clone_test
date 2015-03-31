@@ -1,17 +1,22 @@
-# clone_test
-Code used to test the lttng/tracecompass LXC/namespace analysis
+# Lttng traces samples for Container Analysis
+Code used to test the lttng/tracecompass container analysis
 
 
 #HOWTO :
-Compile this program using gcc :
+There is traces samples with nested LXC containers as well as traces taken with a simple programm creating nested tasks in different PID namespaces.
+To use those traces using tracecompass, get the latest container analysis patch from :
+https://github.com/Selora/tracecompass/tree/container
+
+#The program pid_init_sleep
+Compile it using gcc :
 ```
 gcc pidns_init_sleep.c -o pidns_init_sleep
 ```
 
-#Trace this program :
-To run a program creating pid namespace, you need to be root (or to have user namespace enabled)
+#Creating custom traces:
+To run a program creating pid namespace, you need to be root or to have user namespace enabled.
 
-To have the VPID and VPPID of cloned children's task in lttng event, you need this version of lttng-modules :
+To have the necessary informations in lttng events, you need this version of lttng-modules :
 
 Before doing the following commands, ensure that you have removed ALL of lttng-modules packages before.
 Also, check that the session deamon is not running (lsmod | grep lttng) -> should not return anything
@@ -26,10 +31,10 @@ sudo depmod -a
 First, setup LTTng (as root) with :
 ```
 lttng create namespace_session -o /path/to/trace
-lttng enable-event --kernel --channel container_info sched_process_fork
+lttng enable-event -k -a
 lttng start
 ```
-Note that the above only uses sched_process_fork. One could enable ALL kernel events.
+Note that the method above uses all events. This could lead to really big traces.
 
 Then run the program you just compiled (as root too):
 ```
@@ -41,13 +46,11 @@ Stop lttng :
 lttng stop
 ```
 
-You should get an output similar to this :
+If everything is fine, you should events that looks like this:
 ```
 babeltrace /path/to/trace 
 
-[03:02:40.979995502] (+0.001726402) redwind sched_process_fork: { cpu_id = 0 }, { parent_comm = "pidns_init_slee", parent_tid = 19562, parent_pid = 19562, child_comm = "pidns_init_slee", child_tid = 19563, child_vtid = 1, child_pid = 19563, child_vppid = 0 }
-[03:02:40.981285037] (+0.001289535) redwind sched_process_fork: { cpu_id = 0 }, { parent_comm = "pidns_init_slee", parent_tid = 19562, parent_pid = 19562, child_comm = "pidns_init_slee", child_tid = 19564, child_vtid = 1, child_pid = 19564, child_vppid = 0 }
-[03:02:40.982209282] (+0.000924245) redwind sched_process_fork: { cpu_id = 1 }, { parent_comm = "pidns_init_slee", parent_tid = 19563, parent_pid = 19563, child_comm = "pidns_init_slee", child_tid = 19565, child_vtid = 2, child_pid = 19565, child_vppid = 1 }
-[03:02:40.983831464] (+0.001622182) redwind sched_process_fork: { cpu_id = 0 }, { parent_comm = "pidns_init_slee", parent_tid = 19565, parent_pid = 19565, child_comm = "pidns_init_slee", child_tid = 19566, child_vtid = 1, child_pid = 19566, child_vppid = 0 }
+(...) sched_process_fork: { cpu_id = 1 }, { parent_comm = "bash", parent_tid = 30332, parent_pid = 30332, parent_ns_inum = 4026532363, child_comm = "bash", child_tid = 3568, child_vtid = 2338, child_pid = 3568, child_ns_inum = 4026532363 }
+(...) lttng_statedump_process_state: { cpu_id = 2 }, { tid = 3, vtid = 3, pid = 3, vpid = 3, ppid = 2, vppid = 2, name = "ksoftirqd/0", type = 1, mode = 5, submode = 0, status = 5, ns_level = 0, ns_inum = 4026531836 }
 ```
-
+Note that in the events above, the INode of the PID namespaces has been added over the sched_process_fork events and the lttng_statedump_process_state events
