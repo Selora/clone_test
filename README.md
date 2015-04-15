@@ -22,7 +22,8 @@ Before doing the following commands, ensure that you have removed ALL of lttng-m
 Also, check that the session deamon is not running (lsmod | grep lttng) -> should not return anything
 
 ```
-git clone https://github.com/Selora/lttng-modules
+
+git clone https://github.com/Selora/lttng-modules -b patch
 make
 sudo make modules_install
 sudo depmod -a
